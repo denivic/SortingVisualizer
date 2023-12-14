@@ -11,12 +11,7 @@ class SortingVisualizer():
     from modules.utilitymanager import UtilityManager
     from modules.logger import CustomLogger
     
-    version = Constants.SUDOCUCHECKER_VERSION
-    documentation_path = Constants.DOCUMENTATION_PATH
-
-    _author = "dea@ufm.dk"
-    _maintainer = "dea@ufm.dk"
-    _version = version
+    version = Constants.SORTINGVISUALIZER_VERSION
     
     def __init__(self):
         setLoggerClass(self.CustomLogger)
