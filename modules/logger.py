@@ -1,5 +1,6 @@
 # Standard
 import logging
+from os import path, makedirs
 from enum import Enum
 from logging import handlers
 
@@ -39,13 +40,20 @@ class LoggerType(Enum):
 class SVLogger(logging.Logger):
     def __init__(self, name: str):
         logging.Logger.__init__(self, name, logging.DEBUG)
+        self.check_log_folder()
 
         # Adds a custom logging level.
         logs.add_logging_level('STATUS', logging.DEBUG - 5)
 
-        # Init
+        # Init loggers
         self.initialize_logger(LoggerType.FILE)
         self.initialize_logger(LoggerType.CONSOLE)
+
+
+    def check_log_folder(self) -> None:
+        """Creates the log folder if it doesn't already exist."""
+        if not path.exists(Constants.LOG_PATH):
+            makedirs(Constants.LOG_PATH)
 
 
     def initialize_logger(self, logger_type: LoggerType) -> None:
@@ -78,4 +86,4 @@ class SVLogger(logging.Logger):
                 self.addHandler(fileHandler)
             case _:
                 self.logger.error('Invalid value for "logger_type": {logger_type}')
-                return
+                return""
