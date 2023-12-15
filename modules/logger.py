@@ -1,8 +1,14 @@
+# Standard
 import logging
-from haggis import logs
+from enum import Enum
 from logging import handlers
+
+# Custom module
+from modules.constants import Constants
+
+# Third-party
 from colorama import init, Fore
-from constants import Constants
+from haggis import logs
 
 # Replaces ANSI escape squences with the Win32 equivalent sequences.
 init(autoreset=True)
@@ -25,29 +31,51 @@ class ColorFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-class CustomLogger(logging.Logger):
-    def __init__(self, name: str):
-        self.constants = Constants()
-        logging.Logger.__init__(self, name, logging.DEBUG)
+class LoggerType(Enum):
+    CONSOLE = 1
+    FILE = 2
 
-        # Formatting for console/file loggers
-        console_formatter = ColorFormatter('[%(levelname)s] %(asctime)s - %(message)s', datefmt='%H:%M')
-        file_formatter = logging.Formatter(fmt='[%(levelname)s] %(asctime)s - %(message)s', datefmt='%Y-%m-%d | %H:%M')
+
+class SVLogger(logging.Logger):
+    def __init__(self, name: str):
+        logging.Logger.__init__(self, name, logging.DEBUG)
 
         # Adds a custom logging level.
         logs.add_logging_level('STATUS', logging.DEBUG - 5)
 
-        # Create a rotating file handler for seamless logging. See:  https://tinyurl.com/RotatingFilehandler
-        self.fileHandler = handlers.RotatingFileHandler(filename=self.constants.LOG_PATH,
-                                                        mode='w',
-                                                        encoding='utf-8',
-                                                        backupCount=10,
-                                                        maxBytes=262_144, # 256 KB
-                                                        delay=True)
-        self.fileHandler.setFormatter(file_formatter) 
-        self.addHandler(self.fileHandler)
+        # Init
+        self.initialize_logger(LoggerType.FILE)
+        self.initialize_logger(LoggerType.CONSOLE)
 
-        # Create the console handler.
-        self.consoleHandler = logging.StreamHandler()
-        self.consoleHandler.setFormatter(console_formatter)
-        self.addHandler(self.consoleHandler)
+
+    def initialize_logger(self, logger_type: LoggerType) -> None:
+        """Initializes a logger by using one of the pre-defined
+        logger types as an argument.
+
+        Args:
+            `logger_type (LoggerType)`: The type of logger to initialize.
+        """
+        match logger_type:
+            case LoggerType.CONSOLE:
+                console_formatter = ColorFormatter('[%(levelname)s] %(asctime)s - %(message)s', datefmt='%H:%M')
+
+                # Create the console handler.
+                consoleHandler = logging.StreamHandler()
+                consoleHandler.setFormatter(console_formatter)
+                self.addHandler(consoleHandler)
+            case LoggerType.FILE:
+                file_formatter = logging.Formatter(fmt='[%(levelname)s] %(asctime)s - %(message)s', datefmt='%Y-%m-%d | %H:%M')
+
+                # Create a rotating file handler for seamless logging.
+                # See:  https://tinyurl.com/RotatingFilehandler
+                fileHandler = handlers.RotatingFileHandler(filename=f'{Constants.LOG_PATH}\SVLOG.log',
+                                                           mode='w',
+                                                           encoding='utf-8',
+                                                           backupCount=10,
+                                                           maxBytes=262_144, # 256 KB
+                                                           delay=True)
+                fileHandler.setFormatter(file_formatter)
+                self.addHandler(fileHandler)
+            case _:
+                self.logger.error('Invalid value for "logger_type": {logger_type}')
+                return
