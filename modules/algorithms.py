@@ -20,12 +20,13 @@ class SortingAlgorithms():
             min_index = i
 
             for j in range(i + 1, len(sorted_data)):
-                if order.lower() == 'asc':
-                    if sorted_data[j] < sorted_data[min_index]:
-                        min_index = j
-                elif order.lower() == 'desc':
-                    if sorted_data[j] > sorted_data[min_index]:
-                        min_index = j
+                match order.lower():
+                    case 'asc':
+                        if sorted_data[j] < sorted_data[min_index]:
+                            min_index = j
+                    case 'desc':
+                        if sorted_data[j] > sorted_data[min_index]:
+                            min_index = j
 
             (sorted_data[i], sorted_data[min_index]) = (sorted_data[min_index], sorted_data[i])
 
@@ -41,7 +42,20 @@ class SortingAlgorithms():
         Returns:
             `Iterable[int]`: The given iterable but sorted.
         """
-        raise NotImplementedError
+        sorted_data = data.copy()
+
+        for i in range(len(sorted_data)):
+            for j in range(i + 1, len(sorted_data)):
+                match order.lower():
+                    case 'asc':
+                        if sorted_data[i] > sorted_data[j]:
+                            (sorted_data[i], sorted_data[j]) = (sorted_data[j], sorted_data[i])
+                    case 'desc':
+                        if sorted_data[i] < sorted_data[j]:
+                            (sorted_data[i], sorted_data[j]) = (sorted_data[j], sorted_data[i])
+
+
+        return sorted_data
 
 
     def insertion_sort(self, data: Iterable[int], order: str) -> Iterable[int]:
