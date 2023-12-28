@@ -17,6 +17,7 @@ Scripts/
 
 # Logs
 logs/*.log
+logs/*.log.*
 
 # Distribution / packaging
 .Python
