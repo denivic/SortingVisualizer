@@ -2,9 +2,9 @@ from typing import Iterable
 
 class SortingAlgorithms():
     def __init__(self) -> None:
-        pass
+        self.stats = {}
 
-
+    @classmethod
     def selection_sort(self, data: Iterable[int], order: str) -> Iterable[int]:
         """Sorts a list using the selection sort algorithm.
 
@@ -14,6 +14,9 @@ class SortingAlgorithms():
         Returns:
             `Iterable[int]`: The given iterable but sorted.
         """
+        if len(data) == 1:
+            return data
+
         sorted_data = data.copy()  # Don't want to alter the original.
 
         for i in range(len(sorted_data)):
@@ -32,7 +35,7 @@ class SortingAlgorithms():
 
         return sorted_data
 
-
+    @classmethod
     def bubble_sort(self, data: Iterable[int], order: str) -> Iterable[int]:
         """Sorts a list using the bubble sort algorithm.
 
@@ -42,6 +45,9 @@ class SortingAlgorithms():
         Returns:
             `Iterable[int]`: The given iterable but sorted.
         """
+        if len(data) == 1:
+            return data
+
         sorted_data = data.copy()
 
         for i in range(len(sorted_data)):
@@ -54,10 +60,9 @@ class SortingAlgorithms():
                         if sorted_data[i] < sorted_data[j]:
                             (sorted_data[i], sorted_data[j]) = (sorted_data[j], sorted_data[i])
 
-
         return sorted_data
 
-
+    @classmethod
     def insertion_sort(self, data: Iterable[int], order: str) -> Iterable[int]:
         """Sorts a list using the insertion sort algorithm.
 
@@ -67,7 +72,19 @@ class SortingAlgorithms():
         Returns:
             `Iterable[int]`: The given iterable but sorted.
         """
-        raise NotImplementedError
+        sorted_data = data.copy()
+
+        for i in range(1, len(sorted_data)):
+            key = sorted_data[i]
+
+            j = i-1
+            while j >= 0 and key < sorted_data[j]:
+                    sorted_data[j + 1] = sorted_data[j]
+                    j -= 1
+
+            sorted_data[j + 1] = key
+
+        return sorted_data
 
 
     def merge_sort(self, data: Iterable[int], order: str) -> Iterable[int]:
