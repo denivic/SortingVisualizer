@@ -41,11 +41,9 @@ class SVLogger(logging.Logger):
     def __init__(self, name: str):
         logging.Logger.__init__(self, name, logging.DEBUG)
         self.check_log_folder()
-
-        # Adds a custom logging level.
         logs.add_logging_level('STATUS', logging.DEBUG - 5)
 
-        # Init loggers
+        # Adds a custom logging level.
         self.initialize_logger(LoggerType.FILE)
         self.initialize_logger(LoggerType.CONSOLE)
 
@@ -68,22 +66,22 @@ class SVLogger(logging.Logger):
                 console_formatter = ColorFormatter('[%(levelname)s] %(asctime)s - %(message)s', datefmt='%H:%M')
 
                 # Create the console handler.
-                consoleHandler = logging.StreamHandler()
-                consoleHandler.setFormatter(console_formatter)
-                self.addHandler(consoleHandler)
+                consolehandler = logging.StreamHandler()
+                consolehandler.setFormatter(console_formatter)
+                self.addHandler(consolehandler)
             case LoggerType.FILE:
                 file_formatter = logging.Formatter(fmt='[%(levelname)s] %(asctime)s - %(message)s', datefmt='%Y-%m-%d | %H:%M')
 
                 # Create a rotating file handler for seamless logging.
                 # See:  https://tinyurl.com/RotatingFilehandler
-                fileHandler = handlers.RotatingFileHandler(filename=f'{Constants.LOG_PATH}\SVLOG.log',
+                filehandler = handlers.RotatingFileHandler(filename=f'{Constants.LOG_PATH}\SVLOG.log',
                                                            mode='w',
                                                            encoding='utf-8',
                                                            backupCount=10,
-                                                           maxBytes=262_144, # 256 KB
+                                                           maxBytes=256_000, # 256 KB
                                                            delay=True)
-                fileHandler.setFormatter(file_formatter)
-                self.addHandler(fileHandler)
+                filehandler.setFormatter(file_formatter)
+                self.addHandler(filehandler)
             case _:
                 self.logger.error('Invalid value for "logger_type": {logger_type}')
                 return""
